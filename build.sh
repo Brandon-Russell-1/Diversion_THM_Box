@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -e
+
+#
+# Note: It is assumed that the build script will be run as the root user.
+#
+
+# Update and Upgrade
+echo "[+] Updating"
+
+apt update && apt upgrade -y
+
+# Install Essential Tools
+echo "[+] Installing tools"
+
+apt install -y build-essential git wget curl net-tools
+apt install -y apache2 php libapache2-mod-php
+
+# Create a Vulnerable Web Application
+echo "[+] Creating Web App"
+
+rm -rf /var/www/html/index.html
+cp index.html /var/www/html/
+
+touch /var/www/html/access_log.php
+chmod 666 /var/www/html/access_log.php
+chown www-data:www-data /var/www/html/access_log.php
+cp apache2.conf /etc/apache2/
+cp 000-default.conf /etc/apache2/sites-available/
+mkdir /var/www/html/test
+cp log.txt /var/www/html/test/
+systemctl restart apache2
+
+# Insecure Services
+# Configure the FTP server
+echo "[+] Configuring FTP"
+
+apt install -y vsftpd
+systemctl enable vsftpd
+cp vsftpd.conf /etc/
+cp adminnote.txt /srv/ftp/
+systemctl start vsftpd
+systemctl restart vsftpd
+
+# Weak Passwords
+echo "[+] Adding User"
+
+useradd -m -p $(openssl passwd -1 password123) jimmy
+adduser jimmy sudo
+
+
+# Add Flags
+echo "[+] Dropping flags"
+echo "30fb71445c24c68e6025df305b03b635" > /root/proof.txt
+echo "c385595700173861809d7685bcccf997" > /home/jimmy/local.txt
+chmod 0700 /root/proof.txt
+chmod 0644 /home/jimmy/local.txt
+chown jimmy:jimmy /home/jimmy/local.txt 
+
+
+# Clean up files
+echo "[+] Cleaning up"
+rm -rf /root/build.sh
+rm -rf /root/index.html
+rm -rf /root/vsftpd.conf
+rm -rf /root/000-default.conf
+rm -rf /root/adminnote.txt
+rm -rf /root/apache2.conf
+rm -rf /root/log.txt
+
+echo "[+] Disabling history files"
+cat /dev/null > /home/jimmy/.bash_history && history -c && init 0
+cat /dev/null > /root/.bash_history && history -c && init 0
