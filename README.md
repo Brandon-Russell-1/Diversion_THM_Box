@@ -1,4 +1,4 @@
-# Linux_CTF_Example
+# Diversion TryHackMe, a Linux CTF
 
 This virtual machine is designed specifically for Capture The Flag (CTF) challenges, featuring multiple intentional vulnerabilities for educational and testing purposes. It runs on Ubuntu Server with essential tools like Apache, PHP, and MySQL installed. The machine includes a vulnerable web application susceptible to SQL injection, insecure services such as FTP, and users with weak passwords. Ideal for cybersecurity enthusiasts looking to sharpen their penetration testing skills in a controlled environment. 
 
